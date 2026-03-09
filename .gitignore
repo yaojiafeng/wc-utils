@@ -1,0 +1,13 @@
+node_modules
+.pnpm-store
+.turbo
+dist
+build
+.cache
+.vite
+*.log
+*.tmp
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
