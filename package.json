@@ -1,0 +1,14 @@
+{
+  "name": "wc-utils-workspace",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build:lib": "pnpm --filter @yxst/wc-utils build",
+    "dev:main-app": "pnpm --filter main-app dev",
+    "dev:vue3-form": "pnpm --filter vue3-form dev",
+    "dev:react-form": "pnpm --filter react-form dev"
+  },
+  "devDependencies": {
+    "vite": "^5.0.0"
+  }
+}
