@@ -17,6 +17,7 @@
           <span class="info-value">
             <select v-model="selectedFramework" class="framework-select">
               <option value="vue3">Vue 3 表单</option>
+              <option value="vue2">Vue 2 表单</option>
               <option value="react">React 表单</option>
             </select>
           </span>
@@ -109,9 +110,14 @@ const formError = ref('');
 const successMsg = ref('');
 const submitting = ref(false);
 
-const currentTagName = computed(() =>
-  selectedFramework.value === 'vue3' ? 'vue3-business-form' : 'react-business-form'
-);
+const currentTagName = computed(() => {
+  const map = {
+    vue3: 'vue3-business-form',
+    vue2: 'vue2-business-form',
+    react: 'react-business-form',
+  };
+  return map[selectedFramework.value] ?? 'vue3-business-form';
+});
 
 const statusText = computed(() => {
   const map = { idle: '未加载', loading: '加载中...', loaded: '已就绪', error: '加载失败' };
@@ -122,6 +128,7 @@ const statusText = computed(() => {
 const FORMS_SERVER = import.meta.env.VITE_FORMS_SERVER_URL ?? 'http://localhost:5000';
 const FORM_SCRIPTS = {
   vue3: `${FORMS_SERVER}/vue3-form.umd.js`,
+  vue2: `${FORMS_SERVER}/vue2-form.umd.js`,
   react: `${FORMS_SERVER}/react-form.umd.js`,
 };
 

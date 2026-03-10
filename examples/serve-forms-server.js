@@ -13,6 +13,7 @@ const PORT = Number(process.env.FORMS_SERVER_PORT) || 5000;
 const ROUTES = [
   { path: '/vue3-form.umd.js', file: path.join(__dirname, 'vue3-form/dist/vue3-form.umd.js') },
   { path: '/react-form.umd.js', file: path.join(__dirname, 'react-form/dist/react-form.umd.js') },
+  { path: '/vue2-form.umd.js', file: path.join(__dirname, 'vue2-form/dist/vue2-form.umd.js') },
   { path: '/vue3-form.css', file: path.join(__dirname, 'vue3-form/dist/style.css') },
 ];
 
@@ -39,4 +40,5 @@ server.listen(PORT, () => {
   console.log(`Forms UMD server: http://localhost:${PORT}`);
   console.log('  /vue3-form.umd.js');
   console.log('  /react-form.umd.js');
+  console.log('  /vue2-form.umd.js');
 });

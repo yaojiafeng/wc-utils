@@ -9,8 +9,8 @@ export default defineConfig({
       fileName: (format) => `wc-utils.${format === 'es' ? 'js' : 'umd.cjs'}`,
     },
     rollupOptions: {
-      // 将框架作为 peer 依赖排除，不打包进库
-      external: ['vue', 'react', 'react-dom', 'vue-custom-element'],
+      // 不将框架排除在外：保证在 Vue2 主应用环境中也可使用 Vue3 适配器
+      external: [],
       output: {
         globals: {
           vue: 'Vue',

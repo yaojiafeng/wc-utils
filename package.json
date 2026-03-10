@@ -4,12 +4,13 @@
   "type": "module",
   "scripts": {
     "build:lib": "pnpm --filter @yxst/wc-utils build",
-    "build:forms": "pnpm --filter vue3-form build && pnpm --filter react-form build",
+    "build:forms": "pnpm --filter vue3-form build && pnpm --filter react-form build && pnpm --filter vue2-form build",
     "serve:forms": "node examples/serve-forms-server.js",
     "serve:mock": "pnpm --filter main-app mock",
     "dev:main-app": "pnpm --filter main-app dev",
     "dev:vue3-form": "pnpm --filter vue3-form dev",
-    "dev:react-form": "pnpm --filter react-form dev"
+    "dev:react-form": "pnpm --filter react-form dev",
+    "dev:vue2-form": "pnpm --filter vue2-form dev"
   },
   "devDependencies": {
     "vite": "^5.0.0"

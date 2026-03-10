@@ -19,8 +19,10 @@
     "build": "vite build",
     "dev": "vite build --watch"
   },
+  "dependencies": {
+    "vue-custom-element": "^3.3.0"
+  },
   "peerDependencies": {
-    "vue": ">=3.0.0",
     "react": ">=18.0.0",
     "react-dom": ">=18.0.0"
   },

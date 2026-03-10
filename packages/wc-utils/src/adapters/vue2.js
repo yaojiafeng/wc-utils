@@ -1,6 +1,6 @@
 /**
  * Vue 2 适配器
- * 依赖第三方库 vue-custom-element（需在主应用或业务方安装）。
+ * 依赖第三方库 vue-custom-element（已作为 @yxst/wc-utils 的依赖内置安装，使用者无需单独安装）。
  *
  * 使用方式：
  *   import Vue from 'vue';
@@ -11,6 +11,7 @@
  */
 
 import { camelToKebab } from '../utils/attr.js';
+import vueCustomElement from 'vue-custom-element';
 
 const INTERFACE_METHODS = ['validate', 'getData', 'setData', 'reset'];
 
@@ -29,16 +30,6 @@ export async function registerVue2(tagName, component, options = {}) {
 
   if (!Vue) {
     throw new Error('[wc-utils] Vue 2 适配器需要传入 Vue 构造函数：registerVue2(tagName, component, { Vue })');
-  }
-
-  // 动态加载 vue-custom-element（使用者需自行安装此包）
-  let vueCustomElement;
-  try {
-    // 使用 Function 构造器绕过静态分析，避免打包时将此包误判为依赖
-    // eslint-disable-next-line no-new-func
-    vueCustomElement = (await new Function('return import("vue-custom-element")')()).default;
-  } catch {
-    throw new Error('[wc-utils] 请安装 vue-custom-element：npm install vue-custom-element');
   }
 
   if (!Vue.__vue_custom_element_installed) {

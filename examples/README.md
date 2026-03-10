@@ -5,6 +5,7 @@
 ## 目录说明
 
 - **main-app**：主应用（Vue 3），审批页通过 `loadFormScript(url)` 动态加载 UMD，渲染 `<vue3-business-form>` / `<react-business-form>`。
+- **vue2-form**：Vue 2 业务表单（UMD），入口中调用 `registerWC('vue2-business-form', ...)`，打包为 `dist/vue2-form.umd.js`，供主应用动态加载。
 - **vue3-form**：Vue 3 业务表单，入口中调用 `registerWC('vue3-business-form', ...)`，打包为 `dist/vue3-form.umd.js`。
 - **react-form**：React 业务表单，入口中调用 `registerWC('react-business-form', ...)`，打包为 `dist/react-form.umd.js`。
 
