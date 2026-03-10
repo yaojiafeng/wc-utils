@@ -11,3 +11,5 @@ build
 *.swo
 .DS_Store
 Thumbs.db
+packages/wc-utils/dist
+.npmrc
