@@ -1,6 +1,6 @@
 {
   "name": "@yxst/wc-utils",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "多技术栈业务表单 Web Components 注册工具库",
   "type": "module",
   "main": "./dist/wc-utils.umd.cjs",
