@@ -118,57 +118,24 @@ const statusText = computed(() => {
   return map[loadStatus.value];
 });
 
-// ─── 表单脚本映射（实际项目替换为真实 CDN 地址）──────────────────────────────
+// ─── 表单脚本映射：开发时走本地静态服务，生产可替换为 CDN ─────────────────────
+const FORMS_SERVER = import.meta.env.VITE_FORMS_SERVER_URL ?? 'http://localhost:5000';
 const FORM_SCRIPTS = {
-  vue3: '/vue3-form.umd.js',   // 开发模式下通过 Vite dev server 提供
-  react: '/react-form.umd.js',
+  vue3: `${FORMS_SERVER}/vue3-form.umd.js`,
+  react: `${FORMS_SERVER}/react-form.umd.js`,
 };
 
-// ─── 加载表单脚本 ─────────────────────────────────────────────────────────────
+// ─── 加载表单脚本（走 UMD 架构：子应用打包为 UMD，主应用动态加载并渲染）────────────────
 async function loadForm() {
   loadStatus.value = 'loading';
   formError.value = '';
   try {
-    // 在开发模式下，两个表单都已通过 registerWC 直接注册到当前页面
-    // 生产模式下，此处需动态加载业务方 CDN 脚本：
-    //   await loadFormScript(FORM_SCRIPTS[selectedFramework.value]);
-
-    // 模拟开发模式下两种表单均已就位
-    await registerDevForms();
+    const url = FORM_SCRIPTS[selectedFramework.value];
+    await loadFormScript(url);
     loadStatus.value = 'loaded';
   } catch (err) {
     loadStatus.value = 'error';
     formError.value = err.message;
-  }
-}
-
-/**
- * 开发模式：直接在主应用中注册两种表单（不需要远程加载脚本）
- * 生产环境：业务方自行打包后上传 CDN，主应用 loadFormScript 动态加载
- */
-async function registerDevForms() {
-  const { registerWC } = await import('@yxst/wc-utils');
-
-  // Vue 3 表单（如未注册）
-  if (!customElements.get('vue3-business-form')) {
-    const { default: BusinessFormVue } = await import('../../../vue3-form/src/BusinessForm.vue');
-    registerWC('vue3-business-form', BusinessFormVue, 'vue3', {
-      props: ['processId', 'taskId', 'bizId', 'baseApiUrl', 'authToken'],
-    });
-  }
-
-  // React 表单（如未注册）
-  if (!customElements.get('react-business-form')) {
-    const [{ default: BusinessFormReact }, React, ReactDOM] = await Promise.all([
-      import('../../../react-form/src/BusinessForm.jsx'),
-      import('react'),
-      import('react-dom/client'),
-    ]);
-    registerWC('react-business-form', BusinessFormReact, 'react', {
-      props: ['processId', 'taskId', 'bizId', 'baseApiUrl', 'authToken'],
-      React,
-      ReactDOM,
-    });
   }
 }
 

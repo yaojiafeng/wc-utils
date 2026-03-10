@@ -1,8 +1,25 @@
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const monorepoRoot = path.resolve(__dirname, '../..');
 
 export default defineConfig(({ mode }) => ({
   plugins: [vue()],
+  define:
+    mode === 'lib'
+      ? { 'process.env.NODE_ENV': JSON.stringify('production') }
+      : {},
+  resolve:
+    mode === 'lib'
+      ? {
+          alias: {
+            '@yxst/wc-utils': path.resolve(monorepoRoot, 'packages/wc-utils/src/index.js'),
+          },
+        }
+      : {},
   build:
     mode === 'lib'
       ? {
@@ -14,10 +31,10 @@ export default defineConfig(({ mode }) => ({
             fileName: () => 'vue3-form.umd.js',
           },
           rollupOptions: {
-            // 共享运行时模式：排除 Vue，主应用需提前加载
-            external: ['vue'],
+            // 自包含 UMD：Vue 与 wc-utils 一并打包，主应用仅需加载此脚本即可使用 <vue3-business-form>
             output: {
-              globals: { vue: 'Vue' },
+              globals: {},
+              intro: 'var process = { env: { NODE_ENV: "production" } };',
             },
           },
           cssCodeSplit: false,
