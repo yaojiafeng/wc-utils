@@ -101,7 +101,8 @@ const baseApiUrl = ref('/api/mock');
 const authToken = ref('mock-token-xyz');
 
 // ─── 状态 ─────────────────────────────────────────────────────────────────────
-const selectedFramework = ref('vue3');
+// 默认直接加载 Vue 2 表单，方便调试 wc vue2
+const selectedFramework = ref('vue2');
 const loadStatus = ref('idle'); // idle | loading | loaded | error
 const formLoaded = computed(() => loadStatus.value === 'loaded');
 const formRef = ref(null);
