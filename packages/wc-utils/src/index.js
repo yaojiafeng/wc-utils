@@ -92,16 +92,42 @@ export function registerWC(tagName, component, framework, options = {}) {
  * @param {string} url - 脚本 URL
  * @param {object} [options]
  * @param {number} [options.timeout=10000] - 超时时间（ms）
+ * @param {string} [options.wcTag] - 自定义元素标签名；传入后若元素已注册则直接跳过加载
+ * @param {boolean} [options.bypassSandbox=false] - 是否绕过 qiankun 沙箱（默认关闭，保持原有行为）
+ *   启用后使用 Node.prototype.appendChild 替代 document.head.appendChild，
+ *   可避免脚本进入 qiankun 的 eval 沙箱，防止 HTMLElement.prototype 访问失败。
+ *   适用于作为 qiankun 子应用运行，且 UMD 内部依赖 Custom Elements / class extends HTMLElement 的场景。
  * @returns {Promise<void>}
  *
  * @example
+ * // 普通用法（与原来完全一致）
  * await loadFormScript('https://cdn.example.com/forms/my-form.umd.js');
+ *
+ * @example
+ * // 在 qiankun 子应用中绕过沙箱
+ * await loadFormScript('https://cdn.example.com/forms/my-form.umd.js', {
+ *   wcTag: 'my-form',
+ *   bypassSandbox: true,
+ *   timeout: 15000,
+ * });
  */
-export function loadFormScript(url, { timeout = 10000 } = {}) {
+export function loadFormScript(url, { timeout = 10000, wcTag, bypassSandbox = false } = {}) {
   return new Promise((resolve, reject) => {
-    // 避免重复加载
-    if (document.querySelector(`script[src="${url}"]`)) {
+    // 若提供 wcTag，且自定义元素已注册，则跳过加载
+    if (wcTag && window.customElements && window.customElements.get(wcTag)) {
       resolve();
+      return;
+    }
+
+    // 同 src 的 script 已插入 DOM：等待其 load / error 事件，而非静默跳过
+    const existing = document.querySelector(`script[src="${url}"]`);
+    if (existing) {
+      existing.addEventListener('load', resolve, { once: true });
+      existing.addEventListener(
+        'error',
+        () => reject(new Error(`[wc-utils] 脚本加载失败（已插入）: ${url}`)),
+        { once: true }
+      );
       return;
     }
 
@@ -125,6 +151,13 @@ export function loadFormScript(url, { timeout = 10000 } = {}) {
       script.remove();
     };
 
-    document.head.appendChild(script);
+    if (bypassSandbox) {
+      // 绕过 qiankun 对 HTMLHeadElement.prototype.appendChild 的 patch，
+      // 直接调用 Node.prototype.appendChild 将 script 注入真实 DOM，
+      // 脚本在原生浏览器上下文执行，不受 qiankun eval 沙箱限制。
+      Node.prototype.appendChild.call(document.head, script);
+    } else {
+      document.head.appendChild(script);
+    }
   });
 }

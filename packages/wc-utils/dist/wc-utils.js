@@ -5594,22 +5594,31 @@ function $u(e, t, n, o = {}) {
       );
   }
 }
-function ju(e, { timeout: t = 1e4 } = {}) {
-  return new Promise((n, o) => {
-    if (document.querySelector(`script[src="${e}"]`)) {
-      n();
+function ju(e, { timeout: t = 1e4, wcTag: n, bypassSandbox: o = !1 } = {}) {
+  return new Promise((s, r) => {
+    if (n && window.customElements && window.customElements.get(n)) {
+      s();
       return;
     }
-    const s = document.createElement("script");
-    s.src = e, s.async = !0;
-    const r = setTimeout(() => {
-      o(new Error(`[wc-utils] 脚本加载超时（${t}ms）: ${e}`)), s.remove();
+    const i = document.querySelector(`script[src="${e}"]`);
+    if (i) {
+      i.addEventListener("load", s, { once: !0 }), i.addEventListener(
+        "error",
+        () => r(new Error(`[wc-utils] 脚本加载失败（已插入）: ${e}`)),
+        { once: !0 }
+      );
+      return;
+    }
+    const c = document.createElement("script");
+    c.src = e, c.async = !0;
+    const u = setTimeout(() => {
+      r(new Error(`[wc-utils] 脚本加载超时（${t}ms）: ${e}`)), c.remove();
     }, t);
-    s.onload = () => {
-      clearTimeout(r), n();
-    }, s.onerror = () => {
-      clearTimeout(r), o(new Error(`[wc-utils] 脚本加载失败: ${e}`)), s.remove();
-    }, document.head.appendChild(s);
+    c.onload = () => {
+      clearTimeout(u), s();
+    }, c.onerror = () => {
+      clearTimeout(u), r(new Error(`[wc-utils] 脚本加载失败: ${e}`)), c.remove();
+    }, o ? Node.prototype.appendChild.call(document.head, c) : document.head.appendChild(c);
   });
 }
 export {
